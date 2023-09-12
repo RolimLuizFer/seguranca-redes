@@ -1,0 +1,33 @@
+#Filtro de Spam de e-mail interno mikortik
+
+#Adicionando o raw
+
+/ip firewall raw
+add action=drop chain=prerouting protocol=udp src-port=19,25,1900,11211
+add action=drop chain=prerouting protocol=tcp src-port=19,25,1900,11211
+add action=drop chain=prerouting dst-port=19,25,1900,11211 protocol=udp
+add action=drop chain=prerouting dst-port=19,25,1900,11211 protocol=tcp
+
+#adicionando os filtros
+
+/ip firewall filter
+add action=add-src-to-address-list address-list=SPAM_EMAIL25 \
+    address-list-timeout=1w chain=forward comment=\
+    "LOCALIZAR CLIENTES DE E-MAIL VIRUS" connection-limit=0,0 dst-port=25 \
+    protocol=tcp
+add action=add-src-to-address-list address-list=SPAM_EMAIL587 \
+    address-list-timeout=1w chain=forward comment=\
+    "LOCALIZAR CLIENTES COM SPAM" connection-limit=0,0 dst-port=587 \
+    protocol=tcp
+add action=add-src-to-address-list address-list=SPAM_EMAIL143 \
+    address-list-timeout=1w chain=forward comment=\
+    "LOCALIZAR CLIENTES COM SPAM" connection-limit=0,0 dst-port=143 \
+    protocol=tcp
+add action=add-src-to-address-list address-list=SPAM_EMAIL465 \
+    address-list-timeout=1w chain=forward comment=\
+    "LOCALIZAR CLIENTES COM SPAM" connection-limit=0,0 dst-port=465 \
+    protocol=tcp
+
+add action=drop chain=input comment="Bloqueio da lista de email porta 25" \
+    src-address-list=SPAM_EMAIL25
+
