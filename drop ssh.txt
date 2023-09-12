@@ -1,0 +1,14 @@
+add action=drop chain=input comment="drop ssh brute forcers" dst-port=22,8291 \
+    protocol=tcp src-address-list=ssh_blacklist
+add action=add-src-to-address-list address-list=ssh_blacklist \
+    address-list-timeout=1w3d chain=input connection-state=new dst-port=22,8291 \
+    protocol=tcp src-address-list=ssh_stage3
+add action=add-src-to-address-list address-list=ssh_stage3 \
+    address-list-timeout=1m chain=input connection-state=new dst-port=22,8291 \
+    protocol=tcp src-address-list=ssh_stage2
+add action=add-src-to-address-list address-list=ssh_stage2 \
+    address-list-timeout=1m chain=input connection-state=new dst-port=22,8291 \
+    protocol=tcp src-address-list=ssh_stage1
+add action=add-src-to-address-list address-list=ssh_stage1 \
+    address-list-timeout=1m chain=input connection-state=new dst-port=22,8291 \
+    protocol=tcp
