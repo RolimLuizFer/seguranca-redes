@@ -1,3 +1,6 @@
+Drop SSH brute force in mikrotik
+
+
 add action=drop chain=input comment="drop ssh brute forcers" dst-port=22,8291 \
     protocol=tcp src-address-list=ssh_blacklist
 add action=add-src-to-address-list address-list=ssh_blacklist \
